@@ -1,0 +1,17 @@
+note over browser:
+user made an input("new text") to the text field and clicked the submit button
+end note
+note over browser:
+form submit function is executed
+the new object is created and appended to the list of notes
+re-rendering the list of notes
+end note
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa (payload:{content: "test", date: "2022-03-23T17:47:33.907Z"})
+note over server:
+-server creates new note object with data from request
+-note is appended to the note list
+end note
+server->browser: status:201 {"message":"note created"}
+note over browser:
+console log of recived message
+end note
