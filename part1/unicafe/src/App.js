@@ -28,6 +28,15 @@ const Statistics = (props) => {
 
   const {good, neutral, bad} = props
   const feedbackCounter = good + neutral + bad
+  
+  if(feedbackCounter === 0){
+    return(
+      <div>
+        <Header title='statistics'/>
+        No feedback given
+      </div>
+    )
+  }
 
   return(
     <div>
