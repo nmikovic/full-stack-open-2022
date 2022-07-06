@@ -8,14 +8,6 @@ const Button = (props) => {
   )
 }
 
-const Counter = (props) => {
-  return (
-    <div>
-      {props.name} {props.counter}
-    </div>  
-  )
-}
-
 const Header = (props) => {
   return (
     <>
@@ -32,7 +24,6 @@ const Statistics = (props) => {
   if(feedbackCounter === 0){
     return(
       <div>
-        <Header title='statistics'/>
         No feedback given
       </div>
     )
@@ -40,15 +31,24 @@ const Statistics = (props) => {
 
   return(
     <div>
-      <Header title='statistics'/>
-      <Counter name={'good'} counter={good}/>
-      <Counter name={'neutral'} counter={neutral}/>
-      <Counter name={'bad'} counter={bad}/>
-      <Counter name={'all'} counter={feedbackCounter}/>
-      <Counter name={'average'} counter={(good - bad) / feedbackCounter}/>
-      <Counter name={'positive'} counter={(good / feedbackCounter * 100) + '%'}/>
+      <StatisticLine text={'good'} value={good}/>
+      <StatisticLine text={'neutral'} value={neutral}/>
+      <StatisticLine text={'bad'} value={bad}/>
+      <StatisticLine text={'all'} value={feedbackCounter}/>
+      <StatisticLine text={'average'} value={(good - bad) / feedbackCounter}/>
+      <StatisticLine text={'positive'} value={(good / feedbackCounter * 100) + '%'}/>
     </div>
     
+  )
+}
+
+const StatisticLine = (props) => {
+  const {text, value} = props
+
+  return (
+    <div>
+      {text} {value}
+    </div>  
   )
 }
 
@@ -68,6 +68,7 @@ const App = () => {
       <Button onClick={increaseGood} text={'good'}></Button>
       <Button onClick={increaseNeutral} text={'neutral'}></Button>
       <Button onClick={increaseBad} text={'bad'}></Button>
+      <Header title='statistics'/>
       <Statistics good={good} neutral={neutral} bad={bad}/>
     </div>
   )
