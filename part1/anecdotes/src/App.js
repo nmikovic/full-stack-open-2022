@@ -2,12 +2,9 @@ import { useState } from 'react'
 
 const Button = (props) => {
   return(
-    <div>
       <button onClick={props.onClick}>
-        next anecdote
+        {props.text}
       </button>
-    </div>
-
   )
 }
 
@@ -23,8 +20,16 @@ const App = () => {
   ]
    
   const [selected, setSelected] = useState(0)
+  const [points, setNewPoints] = useState(new Array(7).fill(0))
 
-  const randomNumber = () => {
+  const increasePoints = (index) => () => {
+    const copy = [...points]
+    copy[index] += 1
+    console.log(copy)
+    setNewPoints(copy)
+  } 
+
+  const setNewAnecdote = () => {
     const newValue = Math.floor(Math.random() * 7)
     setSelected(newValue)
   }
@@ -32,7 +37,12 @@ const App = () => {
   return (
     <div>
       {anecdotes[selected]}
-      <Button onClick={randomNumber}/>
+      <br/>
+      has {points[selected]} votes
+      <div>
+        <Button onClick={setNewAnecdote} text={'next anecdote'}/>
+        <Button onClick={increasePoints(selected)} text={'vote'}/>
+      </div>
     </div>
   )
 }
