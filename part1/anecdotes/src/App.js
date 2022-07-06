@@ -8,6 +8,18 @@ const Button = (props) => {
   )
 }
 
+const Anecdote = (props) => {
+  const {anecdote, points} = props
+
+  return(
+    <div>
+      {anecdote}
+      <br/>
+      has {points} votes
+    </div>
+  )
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -21,12 +33,14 @@ const App = () => {
    
   const [selected, setSelected] = useState(0)
   const [points, setNewPoints] = useState(new Array(7).fill(0))
+  const [max, setMax] = useState(0)
 
   const increasePoints = (index) => () => {
     const copy = [...points]
     copy[index] += 1
-    console.log(copy)
+    const maxVotes = copy.indexOf(Math.max(...copy))
     setNewPoints(copy)
+    setMax(maxVotes)
   } 
 
   const setNewAnecdote = () => {
@@ -36,13 +50,14 @@ const App = () => {
 
   return (
     <div>
-      {anecdotes[selected]}
-      <br/>
-      has {points[selected]} votes
+      <h1>Anecdote of the day</h1>
+      <Anecdote anecdote={anecdotes[selected]} points={points[selected]}/>
       <div>
         <Button onClick={setNewAnecdote} text={'next anecdote'}/>
         <Button onClick={increasePoints(selected)} text={'vote'}/>
       </div>
+      <h1>Anecdote with most votes</h1>
+      <Anecdote anecdote={anecdotes[max]} points={points[max]}/>
     </div>
   )
 }
