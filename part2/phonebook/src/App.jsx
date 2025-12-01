@@ -11,18 +11,14 @@ const App = () => {
     const [newNumber, setNewNumber] = useState('');
     const [filterValue, setFilterValue] = useState('');
 
-  /*  useEffect(() => {
-        axios.get('http://localhost:3001/persons').then(response => {
-            console.log(response.data);
-            setPersons(response.data);
-        })
-    }, [])*/
-
     useEffect(() => {
         personService
             .getAll()
             .then(initialPersons => {
                 setPersons(initialPersons)
+            })
+            .catch(error => {
+                console.log('Error while retrieving the data from server', error)
             })
     }, []);
 
@@ -30,23 +26,26 @@ const App = () => {
         event.preventDefault();
         const newPerson = {
             name: newName,
-            number: newNumber,
-            id: persons.length + 1
+            number: newNumber
         }
-        const personExists = persons.some((p) => newPerson.name === p.name);
+        const personExists = persons.find((p) => newPerson.name === p.name);
         if (personExists) {
-            alert(`${newPerson.name} is already added to phonebook`);
-            return;
-        }
-
-      /*  axios
-            .post('http://localhost:3001/persons', newPerson)
-            .then(response => {
-                console.log(response)
-                setPersons(persons.concat(newPerson));
+            if (confirm(`${newPerson.name} is already added to phonebook, replace number with a new one?`)) {
+                personService
+                    .updatePerson(personExists.id, newPerson)
+                    .then(returnedPerson => {
+                        setPersons(persons.map(person => person.id === returnedPerson.id ? returnedPerson : person))
+                    })
+                    .catch(error => {
+                        console.log('Error while updating the data from server', error)
+                    })
                 setNewName('');
                 setNewNumber('');
-            })*/
+                return;
+            } else {
+                return;
+            }
+        }
 
         personService
             .addPerson(newPerson)
@@ -55,6 +54,26 @@ const App = () => {
                 setNewName('');
                 setNewNumber('');
             })
+            .catch(error => {
+                console.log('Error while adding the data from server', error)
+            })
+    }
+
+    const deletePerson = (deletePerson) => {
+
+        if (confirm(`Delete ${deletePerson.name} ?`) == true) {
+            personService
+                .deletePerson(deletePerson.id)
+                .then(returnedPerson => {
+                    setPersons(persons.filter(person => person.id !== deletePerson.id));
+                })
+                .catch(error => {
+                    console.log('Error while deleting the data from server', error)
+                })
+        } else {
+
+        }
+
     }
 
     const handleNameInputChange = (event) => {
@@ -79,7 +98,7 @@ const App = () => {
                         newNumber={newNumber}/>
 
             <h2>Numbers</h2>
-            <Persons persons={persons} filterValue={filterValue}/>
+            <Persons persons={persons} deletePerson={deletePerson} filterValue={filterValue}/>
         </div>
     )
 }
