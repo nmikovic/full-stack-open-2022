@@ -1,8 +1,9 @@
 import {useState, useEffect} from 'react'
-import PearsonForm from './components/PearsonForm.jsx'
+import PersonForm from './components/PersonForm.jsx'
 import Filter from './components/Filter.jsx'
-import Pearsons from './components/Pearsons.jsx'
+import Persons from './components/Persons.jsx'
 import axios from 'axios'
+import personService from './services/persons.js'
 
 const App = () => {
     const [persons, setPersons] = useState([])
@@ -10,28 +11,50 @@ const App = () => {
     const [newNumber, setNewNumber] = useState('');
     const [filterValue, setFilterValue] = useState('');
 
-    useEffect(() => {
+  /*  useEffect(() => {
         axios.get('http://localhost:3001/persons').then(response => {
             console.log(response.data);
             setPersons(response.data);
         })
-    }, [])
+    }, [])*/
 
-    const addPearson = (event) => {
+    useEffect(() => {
+        personService
+            .getAll()
+            .then(initialPersons => {
+                setPersons(initialPersons)
+            })
+    }, []);
+
+    const addPerson = (event) => {
         event.preventDefault();
-        const newPearson = {
+        const newPerson = {
             name: newName,
             number: newNumber,
             id: persons.length + 1
         }
-        const pearsonExists = persons.some((p) => newPearson.name === p.name);
-        if (pearsonExists) {
-            alert(`${newPearson.name} is already added to phonebook`);
+        const personExists = persons.some((p) => newPerson.name === p.name);
+        if (personExists) {
+            alert(`${newPerson.name} is already added to phonebook`);
             return;
         }
-        setPersons(persons.concat(newPearson));
-        setNewName('');
-        setNewNumber('');
+
+      /*  axios
+            .post('http://localhost:3001/persons', newPerson)
+            .then(response => {
+                console.log(response)
+                setPersons(persons.concat(newPerson));
+                setNewName('');
+                setNewNumber('');
+            })*/
+
+        personService
+            .addPerson(newPerson)
+            .then(returnedPerson => {
+                setPersons(persons.concat(returnedPerson));
+                setNewName('');
+                setNewNumber('');
+            })
     }
 
     const handleNameInputChange = (event) => {
@@ -51,12 +74,12 @@ const App = () => {
         <div>
             <h2>Phonebook</h2>
             <Filter filterValue={filterValue} setFilterValue={handleFilterInputChange}/>
-            <PearsonForm addPearson={addPearson} handleNameInputChange={handleNameInputChange}
-                         newName={newName} handleNumberInputChange={handleNumberInputChange}
-                         newNumber={newNumber}/>
+            <PersonForm addPerson={addPerson} handleNameInputChange={handleNameInputChange}
+                        newName={newName} handleNumberInputChange={handleNumberInputChange}
+                        newNumber={newNumber}/>
 
             <h2>Numbers</h2>
-            <Pearsons persons={persons} filterValue={filterValue}/>
+            <Persons persons={persons} filterValue={filterValue}/>
         </div>
     )
 }

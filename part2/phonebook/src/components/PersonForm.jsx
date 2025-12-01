@@ -1,7 +1,7 @@
-const PearsonForm = ({addPearson,handleNameInputChange,newName,handleNumberInputChange,newNumber}) => {
+const PersonForm = ({addPerson,handleNameInputChange,newName,handleNumberInputChange,newNumber}) => {
     return (
         <>
-            <form onSubmit={addPearson}>
+            <form onSubmit={addPerson}>
                 <div>
                     name: <input onChange={handleNameInputChange}
                                  value={newName}/>
@@ -17,4 +17,4 @@ const PearsonForm = ({addPearson,handleNameInputChange,newName,handleNumberInput
         </>
     )
 }
-export default PearsonForm
+export default PersonForm
