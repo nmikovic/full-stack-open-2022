@@ -15,8 +15,22 @@ mongoose
     })
 
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String,
+    name: {
+        type: String,
+        minLength: 3,
+        required: [true, 'field is required']
+    },
+    number: {
+        type: String,
+        required: [true, `field is required`],
+        validate: [{
+            validator: v => /^\d{2,3}-\d+$/.test(v),
+            message: 'wrong number format'
+        }, {
+            validator: v => v.replace(/\D/g, '').length === 8,
+            message: 'number must be at least 8 digit long'
+            }]
+    }
 })
 
 
