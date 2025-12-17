@@ -44,6 +44,11 @@ const App = () => {
                         }, 5000)
                     })
                     .catch(error => {
+                        setNotificationType('error')
+                        setNotificationMessage(error.response.data.error)
+                        setTimeout(() => {
+                            setNotificationMessage(null)
+                        }, 5000)
                         console.log('Error while updating the data from server', error)
                     })
                 setNewName('');
@@ -67,6 +72,11 @@ const App = () => {
                 setNewNumber('');
             })
             .catch(error => {
+                setNotificationType('error')
+                setNotificationMessage(error.response.data.error)
+                setTimeout(() => {
+                    setNotificationMessage(null)
+                }, 5000)
                 console.log('Error while adding the data from server', error)
             })
     }
