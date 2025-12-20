@@ -1,5 +1,5 @@
 const assert = require('node:assert')
-const {test, after, beforeEach, describe} = require('node:test')
+const { test, after, beforeEach, describe } = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
@@ -91,6 +91,51 @@ describe('note api tests', () => {
       .expect(400)
 
     assert.match(result.body.error, /title.*required/)
+  })
+
+  test('successfully deleted note if id exists', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    const contents = blogsAtEnd.map(blog => blog.title)
+    assert(!contents.includes(blogToDelete.title))
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
+  })
+
+  test('error when trying to delete non-existing blog', async () => {
+    await api
+      .delete('/api/blogs/123')
+      .expect(400)
+  })
+
+  test('successfully edited blog', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToEdit = { ...blogsAtStart[0], title: 'Test edited title' }
+
+    await api
+      .put(`/api/blogs/${blogToEdit.id}`)
+      .send(blogToEdit)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    const contents = blogsAtEnd.map(blog => blog.title)
+    assert(contents.includes(blogToEdit.title))
+  })
+
+  test('error when trying to edit non-existing blog', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToEdit = { ...blogsAtStart[0], title: 'Test edited title' }
+    await Blog.findByIdAndDelete(blogToEdit.id)
+
+    await api
+      .put(`/api/blogs/${blogToEdit.id}`)
+      .send(blogToEdit)
+      .expect(404)
   })
 })
 
